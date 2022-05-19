@@ -39,6 +39,30 @@ func (h *kamarHandler) GetKamarAll(c *gin.Context) {
 	}
 }
 
+func (h *kamarHandler) GetKamarByNama(c *gin.Context) {
+	nama := c.Param("nama")
+
+	b, err := h.kamarService.FindByNamaKamar(nama)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+	}
+
+	var booksResponse []kamar.KamarResponse
+	for _, b := range b {
+		bookResponse := converToAllProductResponse(b)
+		booksResponse = append(booksResponse, bookResponse)
+	}
+
+	if booksResponse != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"data": booksResponse,
+		})
+	}
+}
+
 func converToAllProductResponse(b kamar.Kamar) kamar.KamarResponse {
 	return kamar.KamarResponse { 
 		Id:           b.Id,
